@@ -199,6 +199,58 @@ test('should close when dgram socket is closed', () => {
   expect(mock.close).not.toBeCalled()
 })
 
+test('should not close the socket then `closeTransport = false`', () => {
+  const mock = Object.assign(new Emitter(), {
+    send: jest.fn(),
+    close: jest.fn()
+  })
+
+  const socket = new Socket({
+    socket: mock,
+    remotePort: 1111,
+    remoteAddress: '127.0.0.1',
+    closeTransport: false
+  })
+
+  socket.push = jest.fn(() => true)
+  socket.end = jest.fn()
+
+  socket._read()
+  socket.close()
+
+  expect(socket.push).toHaveBeenCalledTimes(1)
+  expect(socket.push).toHaveBeenCalledWith(null)
+
+  expect(socket.end).toHaveBeenCalledTimes(1)
+  expect(mock.close).toHaveBeenCalledTimes(0)
+})
+
+test('should close the socket then `closeTransport = true`', () => {
+  const mock = Object.assign(new Emitter(), {
+    send: jest.fn(),
+    close: jest.fn()
+  })
+
+  const socket = new Socket({
+    socket: mock,
+    remotePort: 1111,
+    remoteAddress: '127.0.0.1',
+    closeTransport: true
+  })
+
+  socket.push = jest.fn(() => true)
+  socket.end = jest.fn()
+
+  socket._read()
+  socket.close()
+
+  expect(socket.push).toHaveBeenCalledTimes(1)
+  expect(socket.push).toHaveBeenCalledWith(null)
+
+  expect(socket.end).toHaveBeenCalledTimes(1)
+  expect(mock.close).toHaveBeenCalledTimes(1)
+})
+
 test('should free queue when socket is closed', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
