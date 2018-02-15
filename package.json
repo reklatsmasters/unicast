@@ -1,6 +1,6 @@
 {
   "name": "unicast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Unicast implementation of UDP Datagram sockets.",
   "main": "index.js",
   "scripts": {
