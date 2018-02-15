@@ -72,6 +72,10 @@ Close the underlying socket and stop listening for data on it.
 
 The `socket.unshift()` method pushes a chunk of data back into the internal buffer. This is useful in certain situations where a stream is being consumed by code that needs to "un-consume" some amount of data that it has optimistically pulled out of the source, so that the data can be passed on to some other party.
 
+* `socket.process(message: Buffer): bool`
+
+The `socket.process()` method helps to handle a chunk of data from an another source. Almost the same as `socket.unshift()` but pushes a chunk of data into the end of the internal buffer.
+
 * `socket.localAddress: string`
 
 The string representation of the local IP address. For example, `74.125.127.100` or `2001:4860:a005::68`.
