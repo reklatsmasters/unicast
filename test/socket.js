@@ -326,15 +326,17 @@ test('unshift() should fill the queue', () => {
   })
 
   socket.push = jest.fn(() => true)
-  const message = Buffer.from('valid')
+  const message1 = Buffer.from('valid1')
+  const message2 = Buffer.from('valid2')
 
-  expect(socket.unshift(message)).toBe(true)
+  expect(socket.unshift(message1)).toBe(true)
+  expect(socket.unshift(message2)).toBe(true)
   expect(socket.push).not.toBeCalled()
 
   socket._read()
 
   expect(socket.push).toHaveBeenCalledTimes(1)
-  expect(socket.push).toHaveBeenLastCalledWith(message)
+  expect(socket.push).toHaveBeenLastCalledWith(message2)
 })
 
 test('unshift should not work', () => {
@@ -412,4 +414,72 @@ test('address', () => {
   expect(socket.remoteAddress).toEqual(remoteAddress)
   expect(socket.localPort).toEqual(port)
   expect(socket.localAddress).toEqual(address)
+})
+
+test('process() should emit `data` event', () => {
+  const mock = Object.assign(new Emitter(), {
+    send: jest.fn(),
+    close: jest.fn()
+  })
+
+  const socket = new Socket({
+    socket: mock,
+    remotePort: 1111,
+    remoteAddress: '127.0.0.1'
+  })
+
+  socket.push = jest.fn(() => true)
+  const message = Buffer.from('valid')
+
+  socket._read()
+  expect(socket.process(message)).toBe(true)
+
+  expect(socket.push).toHaveBeenCalledTimes(1)
+  expect(socket.push).toHaveBeenLastCalledWith(message)
+})
+
+test('process() should fill the queue', () => {
+  const mock = Object.assign(new Emitter(), {
+    send: jest.fn(),
+    close: jest.fn()
+  })
+
+  const socket = new Socket({
+    socket: mock,
+    remotePort: 1111,
+    remoteAddress: '127.0.0.1'
+  })
+
+  socket.push = jest.fn(() => true)
+  const message1 = Buffer.from('valid1')
+  const message2 = Buffer.from('valid2')
+
+  expect(socket.process(message1)).toBe(true)
+  expect(socket.process(message2)).toBe(true)
+  expect(socket.push).not.toBeCalled()
+
+  socket._read()
+
+  expect(socket.push).toHaveBeenCalledTimes(1)
+  expect(socket.push).toHaveBeenLastCalledWith(message1)
+})
+
+test('process should not work', () => {
+  const mock = Object.assign(new Emitter(), {
+    send: jest.fn(),
+    close: jest.fn()
+  })
+
+  const socket = new Socket({
+    socket: mock,
+    remotePort: 1111,
+    remoteAddress: '127.0.0.1'
+  })
+
+  const message = Buffer.from('valid')
+
+  expect(socket.process({})).toBe(false)
+
+  socket.close()
+  expect(socket.process(message)).toBe(false)
 })
