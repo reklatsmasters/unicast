@@ -48,33 +48,6 @@ test('should read with empty queue', () => {
   expect(socket.push).toHaveBeenCalledWith(validMessage)
 })
 
-test('should read from queue', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  const message = Buffer.from('valid')
-  const rinfo = {
-    address: '127.0.0.1',
-    port: 1111
-  }
-
-  socket.push = jest.fn(() => true)
-
-  mock.emit('message', message, rinfo)
-  expect(socket.push).not.toBeCalled()
-
-  socket._read()
-  expect(socket.push).toHaveBeenCalledTimes(1)
-})
-
 test('should not read after close', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
@@ -251,114 +224,6 @@ test('should close the socket then `closeTransport = true`', () => {
   expect(mock.close).toHaveBeenCalledTimes(1)
 })
 
-test('should free queue when socket is closed', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  socket.push = jest.fn(() => true)
-  socket.end = jest.fn()
-
-  const message = Buffer.from('valid')
-  const rinfo = {
-    address: '127.0.0.1',
-    port: 1111
-  }
-
-  mock.emit('message', message, rinfo)
-
-  socket.close()
-
-  expect(socket.push).not.toBeCalled()
-  expect(socket.end).toHaveBeenCalledTimes(1)
-  expect(mock.close).toHaveBeenCalledTimes(1)
-
-  socket._read()
-
-  expect(socket.push).toHaveBeenCalledTimes(1)
-  expect(socket.push).toHaveBeenLastCalledWith(message)
-
-  socket._read()
-
-  expect(socket.push).toHaveBeenCalledTimes(2)
-  expect(socket.push).toHaveBeenLastCalledWith(null)
-})
-
-test('unshift() should emit `data` event', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  socket.push = jest.fn(() => true)
-  const message = Buffer.from('valid')
-
-  socket._read()
-  expect(socket.unshift(message)).toBe(true)
-
-  expect(socket.push).toHaveBeenCalledTimes(1)
-  expect(socket.push).toHaveBeenLastCalledWith(message)
-})
-
-test('unshift() should fill the queue', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  socket.push = jest.fn(() => true)
-  const message1 = Buffer.from('valid1')
-  const message2 = Buffer.from('valid2')
-
-  expect(socket.unshift(message1)).toBe(true)
-  expect(socket.unshift(message2)).toBe(true)
-  expect(socket.push).not.toBeCalled()
-
-  socket._read()
-
-  expect(socket.push).toHaveBeenCalledTimes(1)
-  expect(socket.push).toHaveBeenLastCalledWith(message2)
-})
-
-test('unshift should not work', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  const message = Buffer.from('valid')
-
-  expect(socket.unshift({})).toBe(false)
-
-  socket.close()
-  expect(socket.unshift(message)).toBe(false)
-})
-
 test('destroy', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
@@ -373,14 +238,6 @@ test('destroy', () => {
 
   socket.push = jest.fn(() => true)
   socket.end = jest.fn()
-
-  const message = Buffer.from('valid')
-  const rinfo = {
-    address: '127.0.0.1',
-    port: 1111
-  }
-
-  mock.emit('message', message, rinfo)
 
   socket.destroy()
 
@@ -431,37 +288,10 @@ test('process() should emit `data` event', () => {
   socket.push = jest.fn(() => true)
   const message = Buffer.from('valid')
 
-  socket._read()
   expect(socket.process(message)).toBe(true)
 
   expect(socket.push).toHaveBeenCalledTimes(1)
   expect(socket.push).toHaveBeenLastCalledWith(message)
-})
-
-test('process() should fill the queue', () => {
-  const mock = Object.assign(new Emitter(), {
-    send: jest.fn(),
-    close: jest.fn()
-  })
-
-  const socket = new Socket({
-    socket: mock,
-    remotePort: 1111,
-    remoteAddress: '127.0.0.1'
-  })
-
-  socket.push = jest.fn(() => true)
-  const message1 = Buffer.from('valid1')
-  const message2 = Buffer.from('valid2')
-
-  expect(socket.process(message1)).toBe(true)
-  expect(socket.process(message2)).toBe(true)
-  expect(socket.push).not.toBeCalled()
-
-  socket._read()
-
-  expect(socket.push).toHaveBeenCalledTimes(1)
-  expect(socket.push).toHaveBeenLastCalledWith(message1)
 })
 
 test('process should not work', () => {

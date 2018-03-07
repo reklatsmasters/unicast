@@ -58,7 +58,5 @@
     "jest": "^22.1.4",
     "xo": "^0.18.2"
   },
-  "dependencies": {
-    "denque": "^1.2.2"
-  }
+  "dependencies": {}
 }
