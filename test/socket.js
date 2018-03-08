@@ -1,4 +1,4 @@
-jest.mock('lib/util/is-socket')
+jest.mock('lib/util/is-socket', () => jest.fn().mockImplementation((x) => x !== false))
 
 const Emitter = require('events')
 const Socket = require('lib/socket')
@@ -21,7 +21,17 @@ test('should check address', () => {
   }).toThrow('Option `remoteAddress` should be a valid ip address.')
 })
 
-test('should read with empty queue', () => {
+test('should check socket', () => {
+  expect(() => {
+    new Socket({
+      remotePort: 100,
+      remoteAddress: '127.0.0.1',
+      socket: false
+    })
+  }).toThrow('Option `socket` should be a valid dgram socket.')
+})
+
+test('should read', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
     close: jest.fn()
@@ -37,8 +47,6 @@ test('should read with empty queue', () => {
   const validMessage = Buffer.from('valid')
 
   socket.push = jest.fn(() => true)
-
-  socket._read()
 
   mock.emit('message', invalidMessage, {address: '127.0.0.2', port: 1111})
   mock.emit('message', invalidMessage, {address: '127.0.0.1', port: 2222})
@@ -89,12 +97,14 @@ test('should send messages', () => {
   })
 
   const message = Buffer.from('valid')
-  const callback = jest.fn()
-
-  socket._write(message, 'buffer', callback)
+  socket.write(message)
 
   expect(mock.send).toHaveBeenCalledTimes(1)
-  expect(mock.send).toHaveBeenCalledWith(message, remotePort, remoteAddress, callback)
+  const lastcall = mock.send.mock.calls[0]
+
+  expect(lastcall[0]).toBe(message)
+  expect(lastcall[1]).toEqual(remotePort)
+  expect(lastcall[2]).toEqual(remoteAddress)
 })
 
 test('should not send messages after close', () => {
@@ -137,7 +147,6 @@ test('should close', () => {
   socket.push = jest.fn(() => true)
   socket.end = jest.fn()
 
-  socket._read()
   socket.close()
 
   expect(socket.push).toHaveBeenCalledTimes(1)
@@ -162,7 +171,6 @@ test('should close when dgram socket is closed', () => {
   socket.push = jest.fn(() => true)
   socket.end = jest.fn()
 
-  socket._read()
   mock.emit('close')
 
   expect(socket.push).toHaveBeenCalledTimes(1)
@@ -188,7 +196,6 @@ test('should not close the socket then `closeTransport = false`', () => {
   socket.push = jest.fn(() => true)
   socket.end = jest.fn()
 
-  socket._read()
   socket.close()
 
   expect(socket.push).toHaveBeenCalledTimes(1)
@@ -214,7 +221,6 @@ test('should close the socket then `closeTransport = true`', () => {
   socket.push = jest.fn(() => true)
   socket.end = jest.fn()
 
-  socket._read()
   socket.close()
 
   expect(socket.push).toHaveBeenCalledTimes(1)
@@ -273,7 +279,7 @@ test('address', () => {
   expect(socket.localAddress).toEqual(address)
 })
 
-test('process() should emit `data` event', () => {
+test('process() should work', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
     close: jest.fn()
@@ -294,7 +300,7 @@ test('process() should emit `data` event', () => {
   expect(socket.push).toHaveBeenLastCalledWith(message)
 })
 
-test('process should not work', () => {
+test('process() should not work', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
     close: jest.fn()
