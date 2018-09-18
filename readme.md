@@ -6,7 +6,6 @@
 [![license](https://img.shields.io/npm/l/unicast.svg)](https://npmjs.org/package/unicast)
 [![downloads](https://img.shields.io/npm/dm/unicast.svg)](https://npmjs.org/package/unicast)
 [![Coverage Status](https://coveralls.io/repos/github/reklatsmasters/unicast/badge.svg?branch=master)](https://coveralls.io/github/reklatsmasters/unicast?branch=master)
-[![code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 
 [Unicast](https://en.wikipedia.org/wiki/Unicast) implementation of UDP Datagram sockets.
 

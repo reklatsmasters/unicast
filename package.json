@@ -4,7 +4,7 @@
   "description": "Unicast implementation of UDP Datagram sockets.",
   "main": "index.js",
   "scripts": {
-    "lint": "xo",
+    "lint": "npx eslint .",
     "cover": "jest --coverage",
     "test": "npm run lint && jest",
     "test-ci": "npm run lint && npm run cover"
@@ -30,19 +30,6 @@
   "engines": {
     "node": ">=8"
   },
-  "xo": {
-    "semicolon": false,
-    "space": 2,
-    "rules": {
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ]
-    },
-    "ignores": [
-      "**/test/**"
-    ]
-  },
   "jest": {
     "modulePaths": [
       "<rootDir>"
@@ -55,8 +42,10 @@
     ]
   },
   "devDependencies": {
+    "@comocapital/eslint-config": "^1.3.0",
+    "eslint": "^4.19.1",
     "jest": "^22.1.4",
-    "xo": "^0.18.2"
+    "prettier": "^1.14.2"
   },
   "dependencies": {}
 }
