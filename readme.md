@@ -87,11 +87,11 @@ The string representation of the local IP address. For example, `74.125.127.100`
 
 The numeric representation of the local port. For example, `80` or `21`.
 
-* `socket.remoteAddress: string`
+* `get/set socket.remoteAddress: string`
 
 The string representation of the remote IP address. For example, `74.125.127.100` or `2001:4860:a005::68`.
 
-* `socket.remotePort: number`
+* `get/set socket.remotePort: number`
 
 The numeric representation of the remote port. For example, `80` or `21`.
 
