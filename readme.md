@@ -59,6 +59,10 @@ The string representation of the local IP address. If `address` is not specified
 
 The internal socket will be closed when the `unicast.Socket` is being closed. You can change this behavior with this option.
 
+* `options.messagesFilter: function(socket: Socket, message: Buffer, rinfo: Object): bool`
+
+Custom filter of an incoming messages. By default it check the remote IP address and the remote port.
+
 * `class Socket`
 
 This class is an abstraction of an unicast UDP socket. A `Socket` is also a [duplex stream](https://nodejs.org/api/stream.html#stream_class_stream_duplex), so it can be both readable and writable, and it is also a [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter).

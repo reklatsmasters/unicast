@@ -38,6 +38,18 @@ test('should check socket', () => {
   }).toThrow('Option `socket` should be a valid dgram socket.');
 });
 
+test('should check filter', () => {
+  expect(() => {
+    // eslint-disable-next-line no-new
+    new Socket({
+      remotePort: 100,
+      remoteAddress: '127.0.0.1',
+      socket: true,
+      messagesFilter: true,
+    });
+  }).toThrow('Option `messagesFilter` should be a function.');
+});
+
 test('should read', () => {
   const mock = Object.assign(new Emitter(), {
     send: jest.fn(),
