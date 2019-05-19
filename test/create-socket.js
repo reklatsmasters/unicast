@@ -4,9 +4,7 @@ const createSocket = require('lib/create-socket');
 const Socket = require('lib/socket');
 
 jest.mock('lib/socket');
-jest.mock('lib/util/is-socket', () =>
-  jest.fn().mockImplementation(x => x === true)
-);
+jest.mock('lib/util/is-socket', () => jest.fn().mockImplementation(x => x === true));
 jest.mock('dgram', () => ({
   createSocket(s) {
     return s;

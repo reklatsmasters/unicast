@@ -1,8 +1,6 @@
 'use strict';
 
-jest.mock('lib/util/is-socket', () =>
-  jest.fn().mockImplementation(x => x !== false)
-);
+jest.mock('lib/util/is-socket', () => jest.fn().mockImplementation(x => x !== false));
 
 const Emitter = require('events');
 const Socket = require('lib/socket');

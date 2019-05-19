@@ -30,6 +30,30 @@
   "engines": {
     "node": ">=8"
   },
+  "eslintConfig": {
+    "extends":"@nodertc",
+    "overrides": [
+      {
+        "files": [ "test/**/*.js" ],
+        "env": {
+          "jest": true
+        },
+        "settings": {
+          "import/resolver": {
+            "node": {
+              "moduleDirectory": [
+                "node_modules",
+                "."
+              ]
+            }
+          }
+        },
+        "rules": {
+          "require-jsdoc": "off"
+        }
+      }
+    ]
+  },
   "jest": {
     "modulePaths": [
       "<rootDir>"
@@ -42,10 +66,10 @@
     ]
   },
   "devDependencies": {
-    "@comocapital/eslint-config": "^1.3.0",
-    "eslint": "^4.19.1",
+    "@nodertc/eslint-config": "^0.3.0",
+    "eslint": "^5.16.0",
     "jest": "^23.6.0",
-    "prettier": "^1.14.2"
+    "prettier": "^1.17.1"
   },
   "dependencies": {}
 }

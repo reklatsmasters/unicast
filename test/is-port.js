@@ -9,7 +9,7 @@ test('is port', () => {
   expect(isPort(0)).toBeFalsy();
   expect(isPort(-1)).toBeFalsy();
   expect(isPort(0xffff + 1)).toBeFalsy();
-  expect(isPort(0.0)).toBeFalsy();
+  expect(isPort(0)).toBeFalsy();
   expect(isPort(NaN)).toBeFalsy();
   expect(isPort(null)).toBeFalsy();
   expect(isPort(undefined)).toBeFalsy();
